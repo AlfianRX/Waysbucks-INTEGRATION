@@ -4,7 +4,8 @@ import { API, setAuthToken } from './config/api';
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { UserContext } from "./context/userContext";
-import { Home, AddProductAdmin, AddTopingAdmin, Cart, DetailProduct, IncomeTransactionAdmin, Profile } from './pages'
+import { Home, AddProductAdmin, AddTopingAdmin, Cart, DetailProduct, IncomeTransactionAdmin, Profile} from './pages'
+import EditProfile from "./pages/EditProfile";
 
 
 if (localStorage.token) {
@@ -74,6 +75,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/detail-product/:id" element={<DetailProduct />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<EditProfile />} />
       </Routes>
   );
 }

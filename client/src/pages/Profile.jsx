@@ -2,16 +2,29 @@ import React, { useContext } from 'react'
 import { Navbar, TransactionCard } from '../components'
 import { UserContext } from '../context/userContext'
 import { useQuery } from 'react-query';
+import { useNavigate, useParams } from 'react-router-dom';
 import { API } from '../config/api';
 
 function Profile() {
+
+  const navigate = useNavigate()
+  const { id } = useParams();
 
   let { data: transactions } = useQuery('transactionsCache', async () => {
     const response = await API.get('/transactions');
     return response.data.data
   });
 
+  const editProfile = (profileId) => {
+      navigate(`/profile/${profileId}`)
+  }
+
   const [state] = useContext(UserContext)
+
+  let { data: profiles } = useQuery('profileCache', async () => {
+    const response = await API.get('/profile/');
+    return response.data.data;
+  });
 
   return (
     <div className='container d-flex justify-content-center'>
@@ -27,6 +40,9 @@ function Profile() {
               <h5 className='text-brown'>Email</h5>
               <p>{state.user.email}</p>
             </div>
+
+            <button className='btn btn-red mx-auto' onClick={() => editProfile(state.user.id)}
+            >Edit Profile</button>
           </div>
         </div>
 
