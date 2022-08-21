@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	profiledto "waysbuck/dto/profile"
+	profilesdto "waysbuck/dto/profile"
 	dto "waysbuck/dto/result"
 	"waysbuck/models"
 	"waysbuck/repositories"
@@ -76,7 +76,7 @@ func (h *handlerProfile) CreateProfile(w http.ResponseWriter, r *http.Request) {
 	dataContex := r.Context().Value("dataFile")
 	filename := dataContex.(string)
 
-	request := profiledto.ProfileRequest{
+	request := profilesdto.ProfileRequest{
 		Image:   filename,
 		Phone:   r.FormValue("phone"),
 		Address: r.FormValue("address"),
@@ -111,12 +111,69 @@ func (h *handlerProfile) CreateProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 //. convertResponseProfile function
-func convertResponseProfile(u models.Profile) profiledto.ProfileResponse {
-	return profiledto.ProfileResponse{
+func convertResponseProfile(u models.Profile) profilesdto.ProfileResponse {
+	return profilesdto.ProfileResponse{
 		ID:      u.ID,
 		Phone:   u.Phone,
 		Address: u.Address,
 		UserID:  u.UserID,
 		User:    u.User,
+	}
+}
+
+func (h *handlerProfile) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	dataContex := r.Context().Value("dataFile")
+	filename := dataContex.(string)
+
+	request := profilesdto.ProfileRequest{
+		Phone:   r.FormValue("phone"),
+		Address: r.FormValue("address"),
+		Image:   filename,
+	}
+
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+	profile, err := h.ProfileRepository.GetProfile(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if len(request.Phone) > 0 {
+		profile.Phone = request.Phone
+	}
+
+	if len(request.Address) > 0 {
+		profile.Address = request.Address
+	}
+
+	if len(request.Image) > 0 {
+		profile.Image = request.Image
+	}
+
+	data, err := h.ProfileRepository.UpdateProfile(profile)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: convertProfileResponse(data)}
+	json.NewEncoder(w).Encode(response)
+}
+
+func convertProfileResponse(u models.Profile) profilesdto.ProfileResponse {
+	return profilesdto.ProfileResponse{
+		ID:      u.ID,
+		Phone:   u.Phone,
+		Address: u.Address,
+		Image:   u.Image,
 	}
 }

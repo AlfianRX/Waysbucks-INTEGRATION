@@ -10,6 +10,7 @@ type ProfileRepository interface {
 	FindProfiles() ([]models.Profile, error)
 	GetProfile(ID int) (models.Profile, error)
 	CreateProfile(models.Profile) (models.Profile, error)
+	UpdateProfile(profile models.Profile) (models.Profile, error)
 }
 
 func RepositoryProfile(db *gorm.DB) *repository {
@@ -32,6 +33,12 @@ func (r *repository) GetProfile(ID int) (models.Profile, error) {
 
 func (r *repository) CreateProfile(profile models.Profile) (models.Profile, error) {
 	err := r.db.Create(&profile).Error
+
+	return profile, err
+}
+
+func (r *repository) UpdateProfile(profile models.Profile) (models.Profile, error) {
+	err := r.db.Save(&profile).Error
 
 	return profile, err
 }
