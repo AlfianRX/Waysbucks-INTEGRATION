@@ -51,6 +51,8 @@ function DetailProduct() {
     setTotalPrice(total(price))
   }
 
+
+  // button submit func
   const handleSubmit = (e) => {
     e.preventDefault()
     setCart(cart++)

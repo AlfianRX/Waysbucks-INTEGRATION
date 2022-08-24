@@ -1,11 +1,12 @@
 import { API } from '../config/api';
 import { AddForm, Navbar } from "../components";
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clip from './../assets/img/clip.png';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
+import { UserContext } from '../context/userContext';
 
 import kopi from './../assets/img/question.png'
 
@@ -14,6 +15,7 @@ function EditProfile() {
   const title = 'Edit Profile';
   document.title = 'Waysbucks | ' + title;
 
+  const [state] = useContext(UserContext)
   let navigate = useNavigate();
   const { id } = useParams();
 
@@ -112,8 +114,12 @@ function EditProfile() {
         </div>
         <h2 className='text-red mb-5'>Edit Profile</h2>
         <form onSubmit={ (e) => handleOnSubmit.mutate(e) }>
-          <input className="form-control input-red mb-4" type="text" name='phone' onChange={handleChange} placeholder={`Phone Number`} aria-label="default input example" />
-          <input className="form-control input-red mb-4" type="text" name='address' placeholder="Address" onChange={handleChange} aria-label="default input example" />
+          <input className="form-control input-red mb-4" type="text" 
+          name='phone' onChange={handleChange} placeholder={`Phone Number`} 
+          aria-label="default input example" />
+          <input className="form-control input-red mb-4" type="text" 
+          name='address' placeholder="Address" onChange={handleChange} 
+          aria-label="default input example" />
           <div className="mb-5">
             <input type="file" className="form-control input-file-red" id="inputGroupFile02" name='image' onChange={handleChange}/>
             <label className="form-control label-file" htmlFor="inputGroupFile02">
@@ -127,7 +133,7 @@ function EditProfile() {
           </div>
         </form>
       </div>
-      <img className='col-5' src={preview || kopi} alt="Edit Profile" />
+      <img className='col-5' src={preview || state.user.profile.image} alt="Edit Profile" />
       </div >
       </>
 

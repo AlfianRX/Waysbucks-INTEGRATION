@@ -98,13 +98,9 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//. Convert to Struck Models.User for Send to Repository
-	user := models.User{
-		Email:    request.Email,
-		Password: request.Password,
-	}
 
 	//. For Check email
-	user, err := h.AuthRepository.Login(user.Email)
+	user, err := h.AuthRepository.Login(request.Email)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
